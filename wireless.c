@@ -1,16 +1,27 @@
-#include <pcap.h>
-#include <arpa/inet.h>
-#include <net/if.h>
-#include <net/ethernet.h>
-#include <netinet/if_ether.h>
-#include <sys/ioctl.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fcntl.h> // for open
 #include <unistd.h> // for close
+#include <net/if.h>
+#include <net/if_arp.h>
+#include <sys/ioctl.h>
+#include <arpa/inet.h>
+#include <net/ethernet.h>
+#include <netinet/if_ether.h>
+#if 0
+typedef unsigned char u_char;
+typedef unsigned short u_short;
+typedef unsigned int u_int;
+#else
+#include <sys/types.h>
+#endif
+#include <pcap.h>
+
 #include "test.c"
-
+//#define WSMP_STRICT 0
 #define WSMP_MODE WSMP_STRICT
-
+#if 1
 pcap_t *wsmp_if_init(const char *ifname) {
      char pcap_errbuf[PCAP_ERRBUF_SIZE];
      pcap_errbuf[0] = '\0';
@@ -89,6 +100,7 @@ int wsmp_if_send(const struct wsmp_wsm *msg, const char *ifname, pcap_t *pcap) {
 
      return EXIT_SUCCESS;
 }
+#endif
 
 int main(int argc, char **argv) {
      if (argc != 2) {
@@ -102,15 +114,17 @@ int main(int argc, char **argv) {
 	  fprintf(stderr, "Failed to open pcap interface.\n");
 	  return EXIT_FAILURE;
      }
-
+#if 1
      int i;
      for (i = 0; i < 100; i++) {
 	  struct wsmp_wsm *msg = gen_wsm(WSMP_STRICT);
 	  printf("%d\n", wsmp_if_send(msg, argv[1], pcap));
 	  free_wsm(msg);
+	  sleep(1);
      }
-
+#endif
      pcap_close(pcap);
 
      return EXIT_SUCCESS;
 }
+

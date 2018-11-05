@@ -827,7 +827,7 @@ void test_wsm(int mode) {
      free(buf2);
 }
 
-int main(int ac, char **av) {
+int main1(int ac, char **av) {
      if (ac != 3) {
           printf("usage: test seed it\n");
           exit(1);
